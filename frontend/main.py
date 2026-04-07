@@ -1,5 +1,9 @@
 import streamlit as st
 import requests
+import os
+
+# Get backend URL from environment variable or default to localhost
+BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
 
 # Title
 st.set_page_config(page_title="AI Coding Assistant", layout="centered")
@@ -17,7 +21,7 @@ if st.button("🚀 Generate Code"):
         with st.spinner("Generating..."):
             try:
                 response = requests.post(
-                    "http://127.0.0.1:8000/generate_code",
+                    f"{BACKEND_URL}/generate_code",
                     json={"prompt": prompt, "language": language}
                 )
                 if response.status_code == 200:
