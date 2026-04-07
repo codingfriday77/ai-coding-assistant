@@ -4,11 +4,9 @@ from backend.utils import generate_code_from_prompt
 from dotenv import load_dotenv
 import os
 
-# Clear any cached API key and load fresh from .env
-if "OPENAI_API_KEY" in os.environ:
-    del os.environ["OPENAI_API_KEY"]
-
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"), override=True)
+# Load environment variables from .env file if it exists (local development)
+# On Render, environment variables are set directly in the dashboard
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env"), override=False)
 
 app = FastAPI()
 
