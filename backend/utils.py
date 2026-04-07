@@ -9,7 +9,7 @@ if "OPENAI_API_KEY" in os.environ:
 load_dotenv(override=True)
 
 # Load API key from environment variable
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI()
 
 # ============ PROMPT ENHANCEMENT PIPELINE ============
 
