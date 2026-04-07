@@ -2,15 +2,22 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-# Clear any cached API key and load fresh from .env
-if "OPENAI_API_KEY" in os.environ:
-    del os.environ["OPENAI_API_KEY"]
+# Load environment variables from .env file if it exists (local development)
+# On Render, environment variables are set directly in the dashboard
+load_dotenv(override=False)
 
-load_dotenv(override=True)
+# Lazy initialization of the client - defer until actually needed
+_client = None
 
-# Load API key from environment variable
-client = OpenAI()
-
+def get_openai_client():
+    """Get or initialize the OpenAI client."""
+    global _client
+    if _client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set.")
+        _client = OpenAI(api_key=api_key)
+    return _client
 # ============ PROMPT ENHANCEMENT PIPELINE ============
 
 def validate_clarity(prompt: str) -> tuple[bool, str]:
@@ -133,6 +140,7 @@ def generate_code_from_prompt(prompt: str, language: str) -> str:
     
     full_prompt = f"Write a {language} program to: {enhanced_prompt}\n\nCode:\n"
 
+    client = get_openai_client()
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
